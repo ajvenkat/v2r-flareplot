@@ -8,7 +8,8 @@ import re
 """ function for mapping all GPCRdb numbers based on uniprot id """
 def Get_GPCRdb_Numbers():
 	generic_numbers_dict = {}
-	gpcrdb_generic_numbers_file = "/Users/ajvenkatakrishnan/projects/others/dmitry_vasopressin_bias/data/2018Mar24/V2R_HUMAN_gpcrdb_commGsArr.txt"
+	gpcrdb_generic_numbers_file = "/Users/ajvenkatakrishnan/projects/others/dmitry_vasopressin_bias/data/2018May18/track_labels/V2R_HUMAN_gpcrdb_commGz.txt"
+
 	with open(gpcrdb_generic_numbers_file) as GENERIC:
 		for line in GENERIC:
 
@@ -35,18 +36,18 @@ def Get_interaction_residues(interacting_residues_file):
 
 	with open(interacting_residues_file) as INTERACTING:
 		for line in INTERACTING:
-			(dist_descriptor, aanum_i, aanum_j) = line.rstrip().split(" ")
+			(aanum_i, aanum_j, color_name) = line.rstrip().split(" ")
 			if aanum_i in interacting_residues_dict.keys():
-				interacting_residues_dict[aanum_i][aanum_j] = 1
+				interacting_residues_dict[aanum_i][aanum_j] = color_name
 			else:
 				interacting_residues_dict[aanum_i] = {}
-				interacting_residues_dict[aanum_i][aanum_j] = 1
+				interacting_residues_dict[aanum_i][aanum_j] = color_name
 
 	return interacting_residues_dict
 
 def main():
 
-	interacting_residues_file = "/Users/ajvenkatakrishnan/projects/others/dmitry_vasopressin_bias/data/2018Mar24/CommGsArr.txt"
+	interacting_residues_file = "/Users/ajvenkatakrishnan/projects/others/dmitry_vasopressin_bias/data/2018May18/connectors/CommGz_connectors.txt.mod.txt"
 
 	generic_numbers_dict = Get_GPCRdb_Numbers()
 	interacting_residues_dict = Get_interaction_residues(interacting_residues_file)
@@ -66,7 +67,9 @@ def main():
 			res_i = generic_numbers_dict[aaNum_i]['aaName'] + gpcrdb_num_i
 			res_j = generic_numbers_dict[aaNum_j]['aaName'] + gpcrdb_num_j
 
-			edge = {"name1": res_i, "name2": res_j, "frames": [0]}
+			color_name = interacting_residues_dict[aaNum_i][aaNum_j]
+
+			edge = {"name1": res_i, "name2": res_j, "frames": [0], "color": color_name}
 			ret["edges"].append(edge)
 
 
